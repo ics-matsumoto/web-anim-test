@@ -11,7 +11,12 @@ const animateLine = async (center, angle) => {
   const line = new LineElement(
     elApp,
     new LineSettings(
-      center, 8, 8, angle, `hsl(${randomWithin(40, 50)}, 100%, ${randomWithin(50, 80)}%)`, 50
+      center,
+      8,
+      8,
+      angle,
+      `hsl(${randomWithin(40, 50)}, 100%, ${randomWithin(50, 80)}%)`,
+      50
     )
   );
 
@@ -28,13 +33,18 @@ const animateLine = async (center, angle) => {
   await line.anim(150);
 
   line.dispose();
-}
+};
 
 const animateStar = async (center) => {
   const star = new ImgElement(
     elApp,
     new ElemSettings(
-      "src/assets/star.svg", new Point(center.x, center.y + 5), 50, 50, randomWithin(-30, 30), 0
+      "src/assets/star.svg",
+      new Point(center.x, center.y + 5),
+      50,
+      50,
+      randomWithin(-30, 30),
+      0
     )
   );
   await star.anim(400);
@@ -42,7 +52,7 @@ const animateStar = async (center) => {
   await star.anim(200, "ease-out");
   star.settings.scale = randomWithin(0.8, 1.1);
   await star.anim(100);
-  
+
   setTimeout(async () => {
     star.settings.scale = 1.3;
     await star.anim(300, "ease");
@@ -50,21 +60,20 @@ const animateStar = async (center) => {
     await star.anim(200, "cubic-bezier(0,.67,.39,1)");
     star.dispose();
   }, 2000);
-}
+};
 
 const makeStar = async (center) => {
   const LINE_COUNT = 7;
   animateStar(center);
   for (let index = 0; index < LINE_COUNT; index++) {
-    animateLine(center, 360 / LINE_COUNT * index);
+    animateLine(center, (360 / LINE_COUNT) * index);
   }
-
-}
+};
 
 const initApp = () => {
-  elApp.addEventListener("click", ev => {
+  elApp.addEventListener("click", (ev) => {
     makeStar(new Point(ev.clientX, ev.clientY));
-  })
+  });
 };
 
 initApp();

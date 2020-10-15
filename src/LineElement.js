@@ -3,9 +3,9 @@ import { LineSettings } from "./LineSettings.js";
 export class LineElement {
   /**
    * @param {HTMLElement} parent
-   * @param {LineSettings} settings 
+   * @param {LineSettings} settings
    */
-  constructor (parent, settings) {
+  constructor(parent, settings) {
     this._elLine = document.createElement("div");
     this.settings = settings;
     this._lastSettings = settings.clone();
@@ -24,8 +24,10 @@ export class LineElement {
     parent.appendChild(this._elLine);
   }
 
-  async anim (duration = 1000, easing = "linear") {
-    if (!this._elLine) { return; }
+  async anim(duration = 1000, easing = "linear") {
+    if (!this._elLine) {
+      return;
+    }
 
     const fromSettings = this._lastSettings;
     const toSettings = this.settings;
@@ -38,7 +40,7 @@ export class LineElement {
         translate(${fromSettings.pos.x}px, ${fromSettings.pos.y}px)
         rotate(${fromSettings.angle}deg)
         translateX(${fromSettings.offset}px)
-      `
+      `,
     };
     const toFrame = {
       width: `${toSettings.length}px`,
@@ -49,25 +51,25 @@ export class LineElement {
         translate(${toSettings.pos.x}px, ${toSettings.pos.y}px)
         rotate(${toSettings.angle}deg)
         translateX(${toSettings.offset}px)
-      `
+      `,
     };
-    console.log([fromFrame, toFrame]);
+
     const anim = this._elLine.animate([fromFrame, toFrame], {
       duration: duration,
       fill: "forwards",
       iterations: 1,
-      easing: easing
+      easing: easing,
     });
 
     this._lastSettings = toSettings.clone();
     await anim.finished;
-
   }
 
-  dispose () {
-    if (!this._elLine) { return; }
+  dispose() {
+    if (!this._elLine) {
+      return;
+    }
     this._elLine.parentNode.removeChild(this._elLine);
     this._elLine = null;
   }
-
 }

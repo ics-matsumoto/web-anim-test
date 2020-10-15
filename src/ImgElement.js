@@ -3,9 +3,9 @@ import { ElemSettings } from "./ElemSettings.js";
 export class ImgElement {
   /**
    * @param {HTMLElement} parent
-   * @param {ElemSettings} settings 
+   * @param {ElemSettings} settings
    */
-  constructor (parent, settings) {
+  constructor(parent, settings) {
     this._el = document.createElement("div");
     this.settings = settings;
     this._lastSettings = settings.clone();
@@ -25,8 +25,10 @@ export class ImgElement {
     parent.appendChild(this._el);
   }
 
-  async anim (duration = 1000, easing = "linear") {
-    if (!this._el) { return; }
+  async anim(duration = 1000, easing = "linear") {
+    if (!this._el) {
+      return;
+    }
 
     const fromSettings = this._lastSettings;
     const toSettings = this.settings;
@@ -35,31 +37,31 @@ export class ImgElement {
         translate(${fromSettings.pos.x}px, ${fromSettings.pos.y}px)
         scale(${fromSettings.scale})
         rotate(${fromSettings.angle}deg)
-      `
+      `,
     };
     const toFrame = {
       transform: `
         translate(${toSettings.pos.x}px, ${toSettings.pos.y}px)
         scale(${toSettings.scale})
         rotate(${toSettings.angle}deg)
-      `
+      `,
     };
     const anim = this._el.animate([fromFrame, toFrame], {
       duration: duration,
       fill: "forwards",
       iterations: 1,
-      easing: easing
+      easing: easing,
     });
 
     this._lastSettings = toSettings.clone();
     await anim.finished;
-
   }
 
-  dispose () {
-    if (!this._el) { return; }
+  dispose() {
+    if (!this._el) {
+      return;
+    }
     this._el.parentNode.removeChild(this._el);
     this._el = null;
   }
-
 }
