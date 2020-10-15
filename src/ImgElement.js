@@ -47,7 +47,8 @@ export class ImgElement {
     const anim = this._el.animate([fromFrame, toFrame], {
       duration: duration,
       fill: "forwards",
-      iterations: 1
+      iterations: 1,
+      easing: easing
     });
 
     this._lastSettings = toSettings.clone();

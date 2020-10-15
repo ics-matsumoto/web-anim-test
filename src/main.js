@@ -34,7 +34,7 @@ const animateStar = async (center) => {
   const star = new ImgElement(
     elApp,
     new ElemSettings(
-      "src/assets/star.svg", center, 50, 50, randomWithin(-30, 30), 0
+      "src/assets/star.svg", new Point(center.x, center.y + 5), 50, 50, randomWithin(-30, 30), 0
     )
   );
   await star.anim(400);

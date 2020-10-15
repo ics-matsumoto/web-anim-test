@@ -55,7 +55,8 @@ export class LineElement {
     const anim = this._elLine.animate([fromFrame, toFrame], {
       duration: duration,
       fill: "forwards",
-      iterations: 1
+      iterations: 1,
+      easing: easing
     });
 
     this._lastSettings = toSettings.clone();
