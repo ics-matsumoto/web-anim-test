@@ -4,6 +4,16 @@ html, body {
   box-sizing: border-box;
   height: 100%;
   overflow: hidden;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+#Background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-image: 
+  linear-gradient(to bottom, hsl(255, 84%, 17%) 0%, hsl(265, 37%, 35%) 74%, hsl(289, 28%, 34%) 100%);
 }
 
 #MainStage {
@@ -11,4 +21,13 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+
+#Top {
+  position: absolute;
+  width: 100%;
+  overflow: hidden;
+  top: 200px;
+  text-align: center;
+  color: rgb(170, 161, 184);
 }
