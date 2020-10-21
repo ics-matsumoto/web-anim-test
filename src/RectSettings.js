@@ -3,9 +3,10 @@ import { Point } from "./Point.js";
 /**
  * 画像要素の設定を保持するクラスです
  */
-export class ElemSettings {
+export class RectSettings {
   constructor(
-    src,
+    src = null,
+    color = "transparent",
     pos = null,
     width = 100,
     height = 100,
@@ -13,6 +14,7 @@ export class ElemSettings {
     scale = 1
   ) {
     this.src = src;
+    this.color = color;
     this.pos = pos ? pos.clone() : new Point(0, 0);
     this.width = width;
     this.height = height;
@@ -21,8 +23,9 @@ export class ElemSettings {
   }
 
   clone() {
-    return new ElemSettings(
+    return new RectSettings(
       this.src,
+      this.color,
       this.pos,
       this.width,
       this.height,

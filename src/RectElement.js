@@ -1,9 +1,9 @@
-import { ElemSettings } from "./ElemSettings.js";
+import { RectSettings } from "./RectSettings.js";
 
-export class ImgElement {
+export class RectElement {
   /**
    * @param {HTMLElement} parent
-   * @param {ElemSettings} settings
+   * @param {RectSettings} settings
    */
   constructor(parent, settings) {
     this._el = document.createElement("div");
@@ -11,6 +11,7 @@ export class ImgElement {
     this._lastSettings = settings.clone();
     const style = this._el.style;
     style.position = "absolute";
+    style.backgroundColor = settings.color;
     style.backgroundImage = `url(${settings.src})`;
     style.backgroundRepeat = "no-repeat";
     style.width = `${settings.width}px`;
