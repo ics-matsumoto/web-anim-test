@@ -10,5 +10,6 @@ html, body {
   position: absolute;
   width: 100%;
   height: 100%;
+  background-image: linear-gradient(to top, rgba(89,55,110,1) 0%, rgba(56,25,103,1) 28%, rgb(45, 44, 94) 100%);
   overflow: hidden;
 }
