@@ -16,6 +16,7 @@ export class StartButton {
     parent.appendChild(root);
     root.appendChild(elem);
     root.appendChild(text);
+    root.style.pointerEvents = "auto";
     elem.style.borderRadius = "2px";
     elem.style.backgroundColor = "#f7c920";
     text.style.textAlign = "center";

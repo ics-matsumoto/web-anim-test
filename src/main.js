@@ -3,12 +3,13 @@ import { Point } from "./utils/Point.js";
 import { AnimatedStar } from "./AnimatedStar.js";
 import { StartButton } from "./StartButton.js";
 import { createLines } from "./LineBg.js";
+import { Charactor } from "./Caharactor.js";
 
 const stage = document.getElementById("MainStage");
 
 const showStartScreen = () => {
   const pos = new Point(window.innerWidth / 2, 500);
-  const btn = new StartButton(stage, pos, () => {
+  const btn = new StartButton(document.getElementById("Overlay"), pos, () => {
     document.getElementById("Top").style.visibility = "hidden";
     drawBg();
     initStage();
@@ -26,8 +27,10 @@ const drawBg = (count = 20) => {
 }
 
 const initStage = () => {
+  const chara = new Charactor(stage);
   stage.addEventListener("click", async (ev) => {
     const center = new Point(ev.clientX, ev.clientY);
+    await chara.moveTo(center.x);
     const star = new AnimatedStar(stage, center);
     await star.show();
   });

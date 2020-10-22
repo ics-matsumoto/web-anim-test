@@ -16,11 +16,15 @@ html, body {
   linear-gradient(to bottom, hsl(255, 84%, 17%) 0%, hsl(265, 37%, 35%) 74%, hsl(289, 28%, 34%) 100%);
 }
 
-#MainStage {
+#MainStage, #Overlay {
   position: absolute;
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+
+#Overlay {
+  pointer-events: none;
 }
 
 #Top {
