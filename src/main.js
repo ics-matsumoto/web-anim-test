@@ -1,5 +1,5 @@
 
-import { Point } from "./Point.js";
+import { Point } from "./utils/Point.js";
 import { AnimatedStar } from "./AnimatedStar.js";
 import { StartButton } from "./StartButton.js";
 import { createLines } from "./LineBg.js";

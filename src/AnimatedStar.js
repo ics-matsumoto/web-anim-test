@@ -1,43 +1,55 @@
-
-import { RectElement } from "./RectElement.js";
-import { RectSettings } from "./RectSettings.js";
-import { LineElement } from "./LineElement.js";
-import { LineSettings } from "./LineSettings.js";
-import { Point } from "./Point.js";
-import { randomWithin } from "./Random.js";
+import { Point } from "./utils/Point.js";
+import { randomWithin } from "./utils/Random.js";
+import { createRect } from "./utils/DomUtil.js";
 
 /**
  * ラインを放射するアニメーションを生成・表示します
  * @param {HTMLElement} parent ライン要素を挿入する親要素
- * @param {Point} center アニメーションの中心
  * @param {Number} angle ラインの角度
  */
-const animateLine = async (parent, center, angle) => {
-  const line = new LineElement(
-    parent,
-    new LineSettings(
-      center,
-      8,
-      8,
-      angle,
-      `hsl(${randomWithin(40, 50)}, 100%, ${randomWithin(50, 80)}%)`,
-      50
-    )
-  );
+const animateLine = async (parent, angle) => {
+  const line = createRect(0, 0, 8, 8);
+  parent.appendChild(line);
+  line.style.backgroundColor = `hsl(${randomWithin(40, 50)}, 100%, ${randomWithin(50, 80)}%)`;
+  line.style.transformOrigin = "left center";
+  line.style.borderRadius = "4px";
+  
+  const destLength = randomWithin(50, 80);
+  const destOffset = randomWithin(40, 60);
+  const key1 = {
+    transform: `rotate(${angle}deg) translateX(50px)`,
+    width: "8px"
+  };
+  const key2 = {
+    transform: `rotate(${angle + 120}deg) translateX(0)`,
+    width: "8px"
+  };
+  const key3 = {
+    transform: `rotate(${angle + 120}deg) translateX(${destOffset}px)`,
+    width: `${destLength}px`
+  };
+  const key4 = {
+    transform: `rotate(${angle + 120}deg) translateX(${destLength + destOffset + randomWithin(50, 100)}px)`,
+    width: "0"
+  };
 
-  line.settings.angle += 120;
-  line.settings.offset = 0;
-  await line.anim(300);
+  await line.animate([key1, key2], {
+    duration: 300,
+    easing: "ease",
+    fill: "forwards"
+  }).finished;
+  await line.animate([key2, key3], {
+    duration: 200,
+    easing: "ease-out",
+    fill: "forwards"
+  }).finished;
+  await line.animate([key3, key4], {
+    duration: 150,
+    easing: "cubic-bezier(0,.67,.39,1)",
+    fill: "forwards"
+  }).finished;
 
-  line.settings.length = randomWithin(50, 60);
-  line.settings.offset = randomWithin(40, 60);
-  await line.anim(300, "cubic-bezier(0,.67,.39,1)");
-
-  line.settings.length = 0;
-  line.settings.offset += randomWithin(100, 140);
-  await line.anim(150);
-
-  line.dispose();
+  line.parentNode.removeChild(line);
 };
 
 /**
@@ -52,18 +64,11 @@ export class AnimatedStar {
   constructor (parent, center) {
     this.parent = parent;
     this.center = center;
-    this.star = new RectElement(
-      parent,
-      new RectSettings(
-        "src/assets/star.svg",
-        "transparent",
-        new Point(center.x, center.y + 5),
-        50,
-        50,
-        randomWithin(-30, 30),
-        0
-      )
-    );
+    this.linesElem = createRect(this.center.x + 5, this.center.y, 0, 0);
+    this.parent.appendChild(this.linesElem);
+    this.starElem = createRect(center.x, center.y, 50, 50, randomWithin(-30, 30), 0);
+    this.starElem.style.backgroundImage = "url(src/assets/star.svg)";
+    parent.appendChild(this.starElem);
   }
 
   /**
@@ -71,19 +76,42 @@ export class AnimatedStar {
    */
   async show () {
     // ラインを放射するアニメーション
+
     const LINE_COUNT = 7;
     for (let index = 0; index < LINE_COUNT; index++) {
-      animateLine(this.parent, this.center, (360 / LINE_COUNT) * index);
+      animateLine(this.linesElem, (360 / LINE_COUNT) * index);
     }
 
     // 星が現れるアニメーション
-    const star = this.star;
-    if (!star) { return; }
-    await star.anim(400);
-    star.settings.scale = 1.5;
-    await star.anim(200, "ease-out");
-    star.settings.scale = randomWithin(0.8, 1.1);
-    await star.anim(100);
+    const star = this.starElem;
+    const key1 = {
+      transform: star.style.transform
+    };
+    const key2 = {
+      transform: `translate(${this.center.x}px, ${this.center.y}px) scale(${1.5})`
+    };
+    const key3 = {
+      transform: `translate(${this.center.x}px, ${this.center.y}px) scale(${0.8})`
+    };
+    const key4 = {
+      transform: `translate(${this.center.x}px, ${this.center.y}px) scale(${randomWithin(0.85, 1.25)})`
+    };
+
+    await star.animate([key1, key2], {
+      duration: 400,
+      easing: "ease-out",
+      fill: "forwards"
+    }).finished;
+    await star.animate([key2, key3], {
+      duration: 200,
+      easing: "ease-out",
+      fill: "forwards"
+    }).finished;
+    await star.animate([key3, key4], {
+      duration: 100,
+      easing: "ease-out",
+      fill: "forwards"
+    }).finished;
   }
 
   /**

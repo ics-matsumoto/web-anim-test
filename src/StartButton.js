@@ -1,19 +1,9 @@
-import { randomWithin } from "./Random.js";
-import { wait } from "./wait.js";
+import { createRect } from "./utils/DomUtil.js";
+import { randomWithin } from "./utils/Random.js";
+import { wait } from "./utils/wait.js";
 
 const BTN_WIDTH = 120;
 const BTN_HEIGHT = 40;
-
-const createRect = (x = 0, y = 0, w = 0, h = 0) => {
-  const elem = document.createElement("div");
-  elem.style.position = "absolute";
-  elem.style.width = `${w}px`
-  elem.style.height = `${h}px`;
-  elem.style.marginLeft = `${-w / 2}px`;
-  elem.style.marginTop = `${-h / 2}px`;
-  elem.style.transform = `translate(${x}px, ${y}px)`;
-  return elem;
-}
 
 export class StartButton {
   constructor (parent, pos, onclick) {
@@ -85,12 +75,12 @@ export class StartButton {
     elem.style.visibility = "hidden";
   
     const RECT_SIZE = 100;
-    const xCount = Math.ceil(screenW / RECT_SIZE);
-    const yCount = Math.ceil(screenH / RECT_SIZE);
+    const xCount = Math.ceil(screenW / RECT_SIZE) + 1;
+    const yCount = Math.ceil(screenH / RECT_SIZE) + 1;
     const rects = new Array(xCount * yCount).fill(0).map((_, index) => {
       const x = index % xCount;
       const y = (index - x) / xCount;
-      const rect = createRect(x * RECT_SIZE + RECT_SIZE / 2, y * RECT_SIZE + RECT_SIZE / 2, RECT_SIZE, RECT_SIZE);
+      const rect = createRect(x * RECT_SIZE, y * RECT_SIZE, RECT_SIZE, RECT_SIZE);
       rect.style.backgroundColor = "#f7c920";
       this.root.appendChild(rect);
       return rect;
