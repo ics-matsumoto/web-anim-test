@@ -1,9 +1,14 @@
 import { createRect } from "./utils/DomUtil.js";
+import { wait } from "./utils/wait.js";
 
-const CHAR_W = 60;
-const CHARA_H = 120;
-const baseSpeedMs = 1000;
+const CHAR_W = 120;
+const CHARA_H = 180;
+const baseSpeedMs = 1500;
 
+const DIRECTION = {
+  RIGHT: "right",
+  LEFT: "left"
+};
 export class Charactor {
   /**
    * @param {HTMLElement} parent 
@@ -15,8 +20,10 @@ export class Charactor {
     this._y = stageH - CHARA_H / 2;
     this._latestAction = null; // 実行中または最後に予約された動作のPromise
     this.charaElem = createRect(this._x, this._y, CHAR_W, CHARA_H);
-    this.charaElem.style.backgroundImage = "url(src/assets/tama.svg)";
+    this.charaElem.style.backgroundImage = "url(src/assets/chara-opt.svg)";
     this.charaElem.style.transformOrigin = "center bottom";
+    this.charaElem.style.backgroundSize = "contain";
+    this.charaElem.style.willChange = "transform";
     parent.appendChild(this.charaElem);
   }
 
@@ -48,33 +55,54 @@ export class Charactor {
 
     const chara = this.charaElem;
     const stageW = chara.parentNode.offsetWidth;
+
+    // 現在の位置と移動先の位置から距離と向きを求める
     const dX = x - this._x;
-
+    const direction = dX > 0 ? DIRECTION.RIGHT : DIRECTION.LEFT;
+    // スーテジの横幅を1とした時の移動量
     const moveAmount = Math.abs(dX / stageW);
-    const reqMs = baseSpeedMs * moveAmount;
-    const subMoveX = dX * moveAmount * 0.2;
-    const subRotate = subMoveX > 0 ? 15 : -15;
+    // 移動アニメーションの長さ（距離に応じてアニメーションも長くする）
+    const duration = baseSpeedMs * moveAmount;
+    // 予備動作（溜め）の距離と角度（移動量に応じて溜めの大きさも変える）
+    const prepMoveX = dX * moveAmount * 0.2;
+    const prepRotate = dX > 0 ? 15 : -15;
+    // 開始時・終了時の向きからscaleXの値を求める
+    // 右向き=1, 左向き=-1（左右反転）
+    const startScaleX = this._faceDirection === DIRECTION.RIGHT ? 1 : -1;
+    const endScaleX = direction === DIRECTION.RIGHT ? 1 : -1;
 
-    const key1 = { transform: `translate(${this._x}px, ${this._y}px)` };
-    const key2 = { transform: `translate(${this._x - subMoveX}px, ${this._y}px) rotate(${-subRotate}deg)` };
-    const key3 = { transform: `translate(${x + subMoveX}px, ${this._y}px) rotate(${subRotate}deg)` };
-    const key4 = { transform: `translate(${x}px, ${this._y}px)` };
+    // キーフレームを作成
+    const keyFrames = [
+      { 
+        transform: `translate(${this._x}px, ${this._y}px) scaleX(${startScaleX})`, 
+        offset: 0,
+        easing: "ease-out"
+      },
+      {
+        transform: `translate(${this._x - prepMoveX}px, ${this._y}px) rotate(${-prepRotate}deg) scaleX(${endScaleX})`,
+        offset: 0.2,
+        easing: "cubic-bezier(.07,.69,.54,1.01)"
+      },
+      { 
+        transform: `translate(${x + prepMoveX}px, ${this._y}px) rotate(${prepRotate}deg) scaleX(${endScaleX})`,
+        offset: 0.9,
+        easing: "cubic-bezier(.07,.69,.54,1.01)"
+      },
+      {
+        transform: `translate(${x}px, ${this._y}px) scaleX(${endScaleX})`,
+        offset: 1
+      }
+    ];
 
+    // アニメーション開始前に移動先の位置と向きを記録
     this._x = x;
+    this._faceDirection = direction;
 
-    await chara.animate([key1, key2], {
-      duration: 100,
-      easing: "ease-out"
+    // 作成したキーフレームとアニメーション時間でアニメーションを実行
+    await chara.animate(keyFrames, {
+      duration,
+      fill: "forwards"
     }).finished;
-    await chara.animate([key2, key3], {
-      duration: reqMs,
-      easing: "ease-out"
-    }).finished;
-    await chara.animate([key3, key4], {
-      duration: 100,
-      easing: "ease-out",
-    }).finished;
-    chara.style.transform = key4.transform;
 
     unlock(); // ロックを解放
   }

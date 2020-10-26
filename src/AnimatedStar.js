@@ -74,7 +74,7 @@ export class AnimatedStar {
     this.parent = parent;
     this.center = center;
     this.rootElem = createRect(this.center.x + 5, this.center.y, 0, 0);
-    this.starElem = createRect(0, 0, 50, 50, randomWithin(-30, 30), 0);
+    this.starElem = createRect(0, 0, 50, 50, 0, 0);
     this.linesElem = createRect();
     this.starElem.style.backgroundImage = "url(src/assets/star.svg)";
  
@@ -99,7 +99,7 @@ export class AnimatedStar {
 
     const height = window.innerHeight;
     await root.animate([
-      { transform: `translate(${this.center.x}px, ${height}px)` },
+      { transform: `translate(${this.center.x}px, ${height - 80}px)` },
       { transform: `translate(${this.center.x}px, ${this.center.y}px)` },
     ], {
       duration: 600,
@@ -108,18 +108,19 @@ export class AnimatedStar {
     }).finished;
 
     // 星が現れるアニメーション
+    const staAngle = randomWithin(-30, 30);
     const star = this.starElem;
     const key1 = {
       transform: star.style.transform
     };
     const key2 = {
-      transform: `scale(${1.5})`
+      transform: `scale(${1.5}) rotate(${staAngle}deg)`
     };
     const key3 = {
-      transform: `scale(${0.8})`
+      transform: `scale(${0.8}) rotate(${staAngle}deg)`
     };
     const key4 = {
-      transform: `scale(${randomWithin(0.85, 1.25)})`
+      transform: `scale(${randomWithin(0.85, 1.25)}) rotate(${staAngle}deg)`
     };
 
     await star.animate([key1, key2], {
