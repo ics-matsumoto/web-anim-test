@@ -1,5 +1,6 @@
 import { ParticleNode } from "./ParticleNode.js";
 import { Point } from "./utils/Point.js";
+import { randomPos } from "./utils/Random.js";
 
 // 生成したインスタンスを再利用するための保管プール
 const nodePool = [];
@@ -24,7 +25,8 @@ export class ParticleEmitter {
     const emmit = async () => {
       // プールからインスタンスを取得。なければ新規に生成
       const node = nodePool.pop() || new ParticleNode(this.parent);
-      await node.emit(this.pos);
+      const pos = randomPos(this.pos, 30)
+      await node.emit(pos);
       // アニメーション完了後は再利用するためプールに戻す
       nodePool.push(node);
     }
@@ -37,7 +39,7 @@ export class ParticleEmitter {
       emmit()
       this._timer = setTimeout(onTick, 1000 / this.nodePerSec);
     }
-    
+
     onTick();
   }
 

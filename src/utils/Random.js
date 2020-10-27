@@ -1,3 +1,5 @@
+import { Point } from "./Point.js";
+
 export const randomFrom = (arr) => arr[Math.floor(arr.length * Math.random())];
 
 export const randomWithin = (min, max) => {
@@ -5,7 +7,8 @@ export const randomWithin = (min, max) => {
 };
 
 export const randomPos = (point, maxNoise = 10) => {
-  point.x += (Math.random() - 0.5) * maxNoise;
-  point.y += (Math.random() - 0.5) * maxNoise;
-  return point;
+  return new Point(
+    point.x + (Math.random() - 0.5) * maxNoise,
+    point.y + (Math.random() - 0.5) * maxNoise
+  );
 };
