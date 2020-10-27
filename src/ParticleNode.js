@@ -11,8 +11,9 @@ export class ParticleNode {
     const nodeWrapper = createRect();
     const nodeInner = createRect(0, 0, 20, 20);
     nodeWrapper.style.visibility = "hidden";
-    //nodeWrapper.style.willChange = "transform";
+    nodeWrapper.style.willChange = "transform";
     nodeInner.style.backgroundImage = `url(${randomFrom(ASSETS)})`;
+    nodeInner.style.willChange = "transform";
     parent.appendChild(nodeWrapper);
     nodeWrapper.appendChild(nodeInner);
     this._inner = nodeInner;
@@ -24,9 +25,10 @@ export class ParticleNode {
 
     const nodeInner = this._inner;
     const nodeWrapper = this._wrapper;
-    const moveX = randomWithin(-50, 50);
+    const moveX = randomWithin(-80, 80);
     const moveY = -600;
     const rotate = randomWithin(-720, 720);
+    const scale = Math.pow(randomWithin(1, 1.4), 2);
     const gravity = 1000;
 
     nodeWrapper.style.visibility = "visible";
@@ -40,7 +42,7 @@ export class ParticleNode {
 
     await nodeInner.animate([
       {
-        transform: "translate(0, 0) scale(1)"
+        transform: `translate(0, 0) scale(${scale})`
       },
       {
         transform: `translate(${moveX}px, ${moveY}px) scale(0) rotate(${rotate}deg)`

@@ -35,7 +35,6 @@ export class StartButton {
 
   async disappear () {
     const elem = this.elem;
-    const text = this.text;
     const screenW = window.innerWidth;
     const screenH = window.innerHeight;
     const scaleY = screenW / BTN_HEIGHT * 1.1;
@@ -83,6 +82,7 @@ export class StartButton {
       const y = (index - x) / xCount;
       const rect = createRect(x * RECT_SIZE, y * RECT_SIZE, RECT_SIZE, RECT_SIZE);
       rect.style.backgroundColor = "#f7c920";
+      rect.style.willChange = "transform";
       this.root.appendChild(rect);
       return rect;
     });
@@ -96,8 +96,7 @@ export class StartButton {
       ], {
         duration: 800,
         delay: randomWithin(y * 100, y * 100 + 200),
-        easing: "cubic-bezier(0,.67,.39,1)",
-        fill: "forwards"
+        easing: "cubic-bezier(0,.67,.39,1)"
       })
         .finished
         .then(() => {

@@ -24,6 +24,14 @@ export class Point {
     return r2a(rad);
   }
 
+  add (p) {
+    return new Point(this.x + p.x, this.y + p.y);
+  }
+
+  sub (p) {
+    return new Point(this.x - p.x, this.y - p.y);
+  }
+
   clone() {
     return new Point(this.x, this.y);
   }
