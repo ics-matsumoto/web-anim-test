@@ -8,8 +8,10 @@ import { ParticleEmitter } from "./ParticleEmitter.js";
 
 const stage = document.getElementById("MainStage");
 
+// 開始画面を表示する
 const showStartScreen = () => {
   const pos = new Point(window.innerWidth / 2, 500);
+  // Startボタンを表示し、クリックでメイン画面に遷移する
   const btn = new StartButton(document.getElementById("Overlay"), pos, () => {
     document.getElementById("Top").style.visibility = "hidden";
     drawBg();
@@ -17,6 +19,7 @@ const showStartScreen = () => {
   });
 }
 
+// 背景にランダムなラインを引く
 const drawBg = (count = 20) => {
   createLines(document.getElementById("Background"), [
     "#131c38",
@@ -27,9 +30,11 @@ const drawBg = (count = 20) => {
   ], count);
 }
 
+// メイン画面（キャラクターやパーティクルを表示する）の初期化
 const initStage = () => {
   const chara = new Charactor(stage);
-  const emitter = new ParticleEmitter(stage);
+  const emitter = new ParticleEmitter(stage, 24);
+  let emitterStopTimer = null;
 
   stage.addEventListener("click", async (ev) => {
     const pos = new Point(ev.clientX, ev.clientY);
@@ -39,24 +44,23 @@ const initStage = () => {
   });
 
   // カーソル移動時にパーティクルの発生源を移動
-  const MAX_PARTICLE = 16;
-  let particleAmount = 0;
   stage.addEventListener("pointermove", (ev) => {
-    emitter.pos = new Point(ev.clientX, ev.clientY);
-    if (particleAmount < MAX_PARTICLE) {
-      particleAmount = MAX_PARTICLE;
-      emitter.setAmount(particleAmount);
+    const pos = new Point(ev.clientX, ev.clientY);
+    // 移動量が小さすぎる場合は無視
+    if (emitter.pos.sub(pos).length < 3) { return; }
+    emitter.pos = pos;
+    if (!emitter.isRunning) {
+      emitter.start();
     }
+    // 一定時間カーソル移動がない場合は止める
+    clearTimeout(emitterStopTimer);
+    emitterStopTimer = setTimeout(() => {
+      emitter.stop();
+    }, 500);
   });
-
-  // カーソルが動かない場合にパーティクルを減衰・停止する
-  setInterval(() => {
-    if (!emitter.isRunning) { return; }
-    particleAmount -= 4;
-    emitter.setAmount(particleAmount);
-  }, 2000);
 };
 
+// アプリ起動時の初期化処理
 const initApp = () => {
   drawBg(6);
   showStartScreen();
