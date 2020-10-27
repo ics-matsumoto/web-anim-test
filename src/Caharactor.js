@@ -3,7 +3,7 @@ import { wait } from "./utils/wait.js";
 
 const CHAR_W = 120;
 const CHARA_H = 180;
-const baseSpeedMs = 1500;
+const baseSpeedMs = 2200;
 
 const DIRECTION = {
   RIGHT: "right",
@@ -64,7 +64,7 @@ export class Charactor {
     // 移動アニメーションの長さ（距離に応じてアニメーションも長くする）
     const duration = baseSpeedMs * moveAmount;
     // 予備動作（溜め）の距離と角度（移動量に応じて溜めの大きさも変える）
-    const prepMoveX = dX * moveAmount * 0.2;
+    const prepMoveX = dX * moveAmount * 0.1;
     const prepRotate = dX > 0 ? 15 : -15;
     // 開始時・終了時の向きからscaleXの値を求める
     // 右向き=1, 左向き=-1（左右反転）
@@ -81,12 +81,12 @@ export class Charactor {
       {
         transform: `translate(${this._x - prepMoveX}px, ${this._y}px) rotate(${-prepRotate}deg) scaleX(${endScaleX})`,
         offset: 0.2,
-        easing: "cubic-bezier(.07,.69,.54,1.01)"
+        easing: "cubic-bezier(.23,.01,.31,1)"
       },
       { 
         transform: `translate(${x + prepMoveX}px, ${this._y}px) rotate(${prepRotate}deg) scaleX(${endScaleX})`,
         offset: 0.9,
-        easing: "cubic-bezier(.07,.69,.54,1.01)"
+        easing: "ease-out"
       },
       {
         transform: `translate(${x}px, ${this._y}px) scaleX(${endScaleX})`,
