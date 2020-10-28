@@ -7,7 +7,7 @@ const ASSETS = new Array(ASSET_COUNT)
   .map((_, index) => "src/assets/particles/star" + (index + 1).toString().padStart(2, "0") + ".svg");
 
 export class ParticleNode {
-  constructor (parent) {
+  constructor (parent, scale = 1) {
     const nodeWrapper = createRect();
     const nodeInner = createRect(0, 0, 20, 20);
     nodeWrapper.style.visibility = "hidden";
@@ -18,6 +18,7 @@ export class ParticleNode {
     nodeWrapper.appendChild(nodeInner);
     this._inner = nodeInner;
     this._wrapper = nodeWrapper;
+    this.scale = scale;
   }
 
   async emit (pos) {
@@ -28,7 +29,7 @@ export class ParticleNode {
     const moveX = randomWithin(-80, 80);
     const moveY = -600;
     const rotate = randomWithin(-720, 720);
-    const scale = Math.pow(randomWithin(1, 1.4), 2);
+    const scale = this.scale * Math.pow(randomWithin(1, 1.4), 2);
     const gravity = 1000;
 
     nodeWrapper.style.visibility = "visible";

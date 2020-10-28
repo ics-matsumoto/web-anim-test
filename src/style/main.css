@@ -7,30 +7,30 @@ html, body {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
-#Background {
+.layer {
   position: absolute;
   width: 100%;
   height: 100%;
+  top: 0;
+  left: 0;
   overflow: hidden;
-  background-image: 
-  linear-gradient(to bottom, hsl(255, 84%, 17%) 0%, hsl(265, 37%, 35%) 74%, hsl(289, 28%, 34%) 100%);
+  z-index: 1;
 }
 
-#MainStage, #Overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+#Background {
+  background-image: 
+  linear-gradient(to bottom, hsl(255, 84%, 17%) 0%, hsl(265, 37%, 35%) 74%, hsl(289, 28%, 34%) 100%);
 }
 
 #Overlay {
   pointer-events: none;
 }
 
-#Top {
-  position: absolute;
-  width: 100%;
-  overflow: hidden;
+#Particles {
+  pointer-events: none;
+}
+
+#Toppage {
   top: 200px;
   text-align: center;
   color: rgb(170, 161, 184);

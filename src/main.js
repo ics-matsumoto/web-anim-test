@@ -6,14 +6,18 @@ import { createLines } from "./LineBg.js";
 import { Charactor } from "./Caharactor.js";
 import { ParticleEmitter } from "./ParticleEmitter.js";
 
-const stage = document.getElementById("MainStage");
+const stageLayer = document.getElementById("MainStage");
+const overlayLayer = document.getElementById("Overlay");
+const toppageLayer = document.getElementById("Toppage");
+const backgroundLayer = document.getElementById("Background");
+const ParticleLayer = document.getElementById("Particles");
 
 // 開始画面を表示する
 const showStartScreen = () => {
   const pos = new Point(window.innerWidth / 2, 500);
   // Startボタンを表示し、クリックでメイン画面に遷移する
-  const btn = new StartButton(document.getElementById("Overlay"), pos, () => {
-    document.getElementById("Top").style.visibility = "hidden";
+  const btn = new StartButton(overlayLayer, pos, () => {
+    toppageLayer.style.visibility = "hidden";
     drawBg();
     initStage();
   });
@@ -21,7 +25,7 @@ const showStartScreen = () => {
 
 // 背景にランダムなラインを引く
 const drawBg = (count = 20) => {
-  createLines(document.getElementById("Background"), [
+  createLines(backgroundLayer, [
     "#131c38",
     "#201a33",
     "#23285e",
@@ -32,19 +36,24 @@ const drawBg = (count = 20) => {
 
 // メイン画面（キャラクターやパーティクルを表示する）の初期化
 const initStage = () => {
-  const chara = new Charactor(stage);
-  const emitter = new ParticleEmitter(stage, 24);
+  const chara = new Charactor(stageLayer);
+  const emitter = new ParticleEmitter(ParticleLayer, 20);
   let emitterStopTimer = null;
 
-  stage.addEventListener("click", async (ev) => {
+  stageLayer.addEventListener("click", async (ev) => {
     const pos = new Point(ev.clientX, ev.clientY);
     await chara.moveTo(pos.x);
-    const star = new AnimatedStar(stage, pos);
+    const star = new AnimatedStar(stageLayer, pos);
     await star.show();
+    // しばらくしたら消えるアニメーションを表示してから要素を削除する
+    setTimeout(async () => {
+      await star.hide();
+      star.dispose();
+    }, 10 * 1000);
   });
 
   // カーソル移動時にパーティクルの発生源を移動
-  stage.addEventListener("pointermove", (ev) => {
+  stageLayer.addEventListener("pointermove", (ev) => {
     const pos = new Point(ev.clientX, ev.clientY);
     // 移動量が小さすぎる場合は無視
     if (emitter.pos.sub(pos).length < 3) { return; }

@@ -1,4 +1,6 @@
+import { ParticleEmitter } from "./ParticleEmitter.js";
 import { createRect } from "./utils/DomUtil.js";
+import { Point } from "./utils/Point.js";
 import { wait } from "./utils/wait.js";
 
 const CHAR_W = 120;
@@ -22,9 +24,14 @@ export class Charactor {
     this.charaElem = createRect(this._x, this._y, CHAR_W, CHARA_H);
     this.charaElem.style.backgroundImage = "url(src/assets/chara-opt.svg)";
     this.charaElem.style.transformOrigin = "center bottom";
-    this.charaElem.style.backgroundSize = "contain";
+    this.charaElem.style.zIndex = "1";    
     this.charaElem.style.willChange = "transform";
     parent.appendChild(this.charaElem);
+    this.standing();
+
+    this.emitter = new ParticleEmitter(this.charaElem, 4, 0.4);
+    this.emitter.pos = new Point(CHAR_W * 0.8, CHARA_H * 0.1);
+    this.emitter.start();
   }
 
   /**
@@ -105,5 +112,33 @@ export class Charactor {
     }).finished;
 
     unlock(); // ロックを解放
+
+    this.standing();
+  }
+
+  standing () {
+    const scaleX = this._faceDirection === DIRECTION.RIGHT ? 1 : -1;
+    const keyFrames = [
+      { 
+        transform: `translate(${this._x}px, ${this._y}px) scale(${scaleX}, 1)`, 
+        easing: "ease-out"
+      },
+      {
+        transform: `translate(${this._x}px, ${this._y + 10}px) scale(${scaleX}, 0.9) rotate(-5deg)`,
+        easing: "ease-out",
+        offset: 0.4
+      },
+      { 
+        transform: `translate(${this._x}px, ${this._y}px) scale(${scaleX}, 1)`, 
+        offset: 0.7
+      },
+      { 
+        transform: `translate(${this._x}px, ${this._y}px) scale(${scaleX}, 1)`, 
+      }
+    ];
+    this.charaElem.animate(keyFrames, {
+      duration: 4000,
+      iterations: Infinity
+    });
   }
 }

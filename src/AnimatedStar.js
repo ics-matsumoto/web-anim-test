@@ -91,12 +91,13 @@ export class AnimatedStar {
     if (!root) { return; }
 
 
-    // ラインを放射するアニメーション
+    // ラインを放射するアニメーション（非同期=awaitしない）
     const LINE_COUNT = 7;
     for (let index = 0; index < LINE_COUNT; index++) {
       animateLine(this.linesElem, (360 / LINE_COUNT) * index);
     }
 
+    // 星とライン全体を画面下から打ち上げるアニメーション
     const height = window.innerHeight;
     await root.animate([
       { transform: `translate(${this.center.x}px, ${height - 80}px)` },
@@ -108,36 +109,38 @@ export class AnimatedStar {
     }).finished;
 
     // 星が現れるアニメーション
-    const staAngle = randomWithin(-30, 30);
+    const starAngle = randomWithin(-30, 30);
     const star = this.starElem;
-    const key1 = {
-      transform: star.style.transform
-    };
-    const key2 = {
-      transform: `scale(${1.5}) rotate(${staAngle}deg)`
-    };
-    const key3 = {
-      transform: `scale(${0.8}) rotate(${staAngle}deg)`
-    };
-    const key4 = {
-      transform: `scale(${randomWithin(0.85, 1.25)}) rotate(${staAngle}deg)`
-    };
 
-    await star.animate([key1, key2], {
-      duration: 400,
-      easing: "ease-out",
+    const starAnim = star.animate([
+      { transform: star.style.transform, easing: "ease-out" },
+      { transform: `scale(${1.5}) rotate(${starAngle}deg)`, offset: 0.6, easing: "ease-out" },
+      { transform: `scale(${0.8}) rotate(${starAngle}deg)`, offset: 0.9, easing: "ease-out" },
+      { transform: `scale(${randomWithin(0.85, 1.25)}) rotate(${starAngle}deg)` }
+    ], {
+      duration: 700,
       fill: "forwards"
-    }).finished;
-    await star.animate([key2, key3], {
-      duration: 200,
-      easing: "ease-out",
-      fill: "forwards"
-    }).finished;
-    await star.animate([key3, key4], {
-      duration: 100,
-      easing: "ease-out",
-      fill: "forwards"
-    }).finished;
+    })
+    await starAnim.finished;
+    starAnim.commitStyles();
+    starAnim.cancel();
+    this.startSwing();
+  }
+
+  startSwing () {
+    const root = this.rootElem;
+    if (!root) { return; }
+
+    root.animate([
+      { transform: `translate(${this.center.x - 5}px, ${this.center.y}px) rotate(-15deg)` },
+      { transform: `translate(${this.center.x + 5}px, ${this.center.y}px) rotate(15deg)` }
+    ], {
+      duration: 3000,
+      easing: "ease-in-out",
+      iterations: Infinity, // ループ再生
+      direction: "alternate", // 最後まで再生したら巻き戻す
+      iterationStart: 0.5 // 中間点（回転角=0）から始める
+    });
   }
 
   /**
@@ -148,27 +151,14 @@ export class AnimatedStar {
     if (!star) { return; }
 
     // 星が消えるアニメーション
-    const key1 = {
-      transform: star.style.transform
-    };
-    const key2 = {
-      transform: `scale(${1.2})`
-    };
-    const key3 = {
-      transform: `scale(${0})`
-    };
-
-    await star.animate([key1, key2], {
-      duration: 400,
-      easing: "ease-out",
+    await star.animate([
+      { transform: star.style.transform },
+      { transform: `scale(${1.4})`, offset: 0.4, easeing: "ease" },
+      { transform: `scale(${0})`, easeing: "ease-out" }
+    ], {
+      duration: 700,
       fill: "forwards"
     }).finished;
-    await star.animate([key2, key3], {
-      duration: 200,
-      easing: "ease-out",
-      fill: "forwards"
-    }).finished;
-
   }
 
   /**
